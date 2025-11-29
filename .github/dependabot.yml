@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/HA_VMI"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "docker"
+      - "dependencies"
+    commit-message:
+      prefix: "chore(docker):"
+  
+  - package-ecosystem: "pip"
+    directory: "/HA_VMI"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "python"
+      - "dependencies"
+    commit-message:
+      prefix: "chore(python):"
+    
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "github-actions"
+      - "ci/cd"
+    commit-message:
+      prefix: "chore(ci):"

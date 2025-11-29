@@ -6,11 +6,39 @@
     "ha_vmi": {
       "name": "HA VMI - Ventilairsec & EnOcean",
       "slug": "ha_vmi",
-      "description": "Addon Home Assistant pour intégrer les VMI Purevent et modules EnOcean via MQTT",
+      "description": "Addon Home Assistant pour intégrer VMI Purevent et capteurs EnOcean via MQTT",
       "url": "https://github.com/fortinric88/VMI/tree/main/HA_VMI",
+      "documentation": "https://github.com/fortinric88/VMI/blob/main/HA_VMI/HOMEASSISTANT_INTEGRATION.md",
+      "repository": "https://github.com/fortinric88/VMI",
       "version": "1.0.0",
+      "image": "ghcr.io/fortinric88/ha_vmi-{arch}",
       "arch": ["aarch64", "amd64", "armv7"],
-      "homeassistant": "2023.8.0"
+      "homeassistant": "2023.8.0",
+      "startup": "services",
+      "boot": "auto",
+      "privileged": ["NET_ADMIN"],
+      "host_network": true,
+      "ports": {
+        "9999/tcp": null
+      },
+      "options": {
+        "device": "auto",
+        "log_level": "info",
+        "mqtt_broker": "localhost",
+        "mqtt_port": 1883,
+        "mqtt_user": "",
+        "mqtt_password": "",
+        "vmi_name": "Ventilairsec"
+      },
+      "schema": {
+        "device": "str?",
+        "log_level": "list(debug|info|warning|error)",
+        "mqtt_broker": "str",
+        "mqtt_port": "port",
+        "mqtt_user": "str?",
+        "mqtt_password": "password?",
+        "vmi_name": "str"
+      }
     }
   }
 }

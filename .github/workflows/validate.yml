@@ -1,0 +1,99 @@
+# Validation du manifest Home Assistant
+name: Validate Addon Manifest
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'HA_VMI/manifest.json'
+      - 'repository.json'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'HA_VMI/manifest.json'
+      - 'repository.json'
+
+jobs:
+  validate:
+    name: Validate Manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install validation tools
+        run: |
+          pip install jsonschema
+
+      - name: Validate manifest.json syntax
+        run: |
+          python3 -m json.tool HA_VMI/manifest.json > /dev/null
+          echo "✅ manifest.json syntax valide"
+
+      - name: Validate repository.json syntax
+        run: |
+          python3 -m json.tool repository.json > /dev/null
+          echo "✅ repository.json syntax valide"
+
+      - name: Check required fields in manifest
+        run: |
+          python3 << 'EOF'
+          import json
+          
+          required_fields = ['name', 'version', 'slug', 'description', 'arch', 'startup', 'boot']
+          
+          with open('HA_VMI/manifest.json') as f:
+              manifest = json.load(f)
+          
+          missing = [field for field in required_fields if field not in manifest]
+          
+          if missing:
+              print(f"❌ Champs manquants: {', '.join(missing)}")
+              exit(1)
+          
+          print("✅ Tous les champs requis sont présents")
+          print(f"  - Name: {manifest['name']}")
+          print(f"  - Version: {manifest['version']}")
+          print(f"  - Slug: {manifest['slug']}")
+          print(f"  - Architectures: {', '.join(manifest['arch'])}")
+          EOF
+
+      - name: Validate repository.json structure
+        run: |
+          python3 << 'EOF'
+          import json
+          
+          with open('repository.json') as f:
+              repo = json.load(f)
+          
+          required = ['name', 'url', 'maintainer', 'addons']
+          missing = [field for field in required if field not in repo]
+          
+          if missing:
+              print(f"❌ Champs manquants dans repository.json: {', '.join(missing)}")
+              exit(1)
+          
+          if not repo['addons']:
+              print("❌ Pas d'addon défini dans repository.json")
+              exit(1)
+          
+          print("✅ repository.json valide")
+          for slug, addon in repo['addons'].items():
+              print(f"  - {addon['name']} ({slug})")
+          EOF
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-report
+          path: |
+            HA_VMI/manifest.json
+            repository.json

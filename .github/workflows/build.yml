@@ -1,0 +1,80 @@
+# GitHub Actions Workflow pour builder et publier l'addon
+name: Build and Push Addon Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'HA_VMI/**'
+      - '.github/workflows/build.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'HA_VMI/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+          - arch: armv7
+            platform: linux/arm/v7
+          - arch: aarch64
+            platform: linux/arm64
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/ha_vmi-${{ matrix.arch }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./HA_VMI
+          platforms: ${{ matrix.platform }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILD_FROM=ghcr.io/home-assistant/base:latest
+
+      - name: Build summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Architecture**: ${{ matrix.arch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platform**: ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: ghcr.io/${{ github.repository_owner }}/ha_vmi-${{ matrix.arch }}" >> $GITHUB_STEP_SUMMARY

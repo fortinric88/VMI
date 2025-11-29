@@ -45,6 +45,7 @@ git commit -m "initial: setup home assistant addon for vmi purevent and enocean"
 # Ajouter le remote et pousser
 git remote add origin https://github.com/fortinric88/ha-vmi.git
 git branch -M main
+git pull origin main --allow-unrelated-histories
 git push -u origin main
 ```
 

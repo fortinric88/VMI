@@ -10,7 +10,6 @@
   "startup": "services",
   "boot": "auto",
   "arch": ["aarch64", "amd64", "armv7"],
-  "image": "ghcr.io/fortinric88/ha-vmi-{arch}",
   "privileged": ["NET_ADMIN"],
   "host_network": true,
   "options": {

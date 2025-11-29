@@ -1,9 +1,9 @@
 {
-  "name": "VMI Home Assistant Repository",
+  "name": "VMI Home Assistant Add-ons",
   "url": "https://github.com/fortinric88/VMI",
   "maintainer": "fortinric88",
-  "addons": {
-    "ha_vmi": {
+  "addons": [
+    {
       "name": "HA VMI - Ventilairsec & EnOcean",
       "slug": "ha_vmi",
       "description": "Addon Home Assistant pour intégrer VMI Purevent et capteurs EnOcean via MQTT",
@@ -40,5 +40,5 @@
         "vmi_name": "str"
       }
     }
-  }
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "minor_version": 0,
+  "key": "ha_vmi",
+  "data": {
+    "mqtt_prefix": "home/vmi",
+    "devices": {
+      "d1079-01-00": {
+        "name": "VMI Ventilairsec",
+        "device_type": "d1079-01-00",
+        "model": "Purevent",
+        "manufacturer": "Ventilairsec"
+      }
+    }
+  }
+}

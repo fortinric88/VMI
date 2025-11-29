@@ -7,7 +7,7 @@
       "name": "HA VMI - Ventilairsec & EnOcean",
       "slug": "ha_vmi",
       "description": "Addon Home Assistant pour intégrer VMI Purevent et capteurs EnOcean via MQTT",
-      "url": "https://github.com/fortinric88/VMI/tree/main/HA_VMI",
+      "url": "https://github.com/fortinric88/VMI",
       "documentation": "https://github.com/fortinric88/VMI/blob/main/HA_VMI/HOMEASSISTANT_INTEGRATION.md",
       "repository": "https://github.com/fortinric88/VMI",
       "version": "1.0.0",
